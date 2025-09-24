@@ -3,16 +3,16 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files first for better caching
+COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy source code
+# Copy all other files
 COPY . .
 
-# Expose the port your app runs on
+# Expose the port
 EXPOSE 3000
 
 # Start the application
