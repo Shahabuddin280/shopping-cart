@@ -1,16 +1,9 @@
-FROM node:18-alpine
-
-# Set working directory
+FROM maven:3.8.5-openjdk-17 AS builder
 WORKDIR /app
-
-# Copy ALL files first
 COPY . .
+RUN mvn clean package -DskipTests
 
-# Install dependencies
-RUN npm install
-
-# Expose the port
-EXPOSE 3000
-
-# Start the application
-CMD ["npm", "start"]
+FROM tomcat:9.0-jre17
+COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
